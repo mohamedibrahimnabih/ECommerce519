@@ -4,8 +4,9 @@ using ECommerce.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce.Controllers
+namespace ECommerce.Areas.Customer.Controllers
 {
+    [Area("Customer")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -30,13 +31,13 @@ namespace ECommerce.Controllers
 
             if(filterProductVM.minPrice is not null)
             {
-                products = products.Where(e => e.Price - (e.Price * e.Discount / 100) > filterProductVM.minPrice);
+                products = products.Where(e => e.Price - e.Price * e.Discount / 100 > filterProductVM.minPrice);
                 ViewBag.minPrice = filterProductVM.minPrice;
             }
 
             if (filterProductVM.maxPrice is not null)
             {
-                products = products.Where(e => e.Price - (e.Price * e.Discount / 100) < filterProductVM.maxPrice);
+                products = products.Where(e => e.Price - e.Price * e.Discount / 100 < filterProductVM.maxPrice);
                 ViewBag.maxPrice = filterProductVM.maxPrice;
             }
 
@@ -70,7 +71,7 @@ namespace ECommerce.Controllers
             // Pagination
             ViewBag.TotalPages = Math.Ceiling(products.Count() / 8.0);
             ViewBag.CurrentPage = page;
-            products = products.Skip(((page - 1) * 8)).Take(8); // 0 .. 8
+            products = products.Skip((page - 1) * 8).Take(8); // 0 .. 8
 
             return View(products.AsEnumerable());
         }
