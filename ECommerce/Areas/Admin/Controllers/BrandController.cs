@@ -51,6 +51,9 @@ namespace ECommerce.Areas.Admin.Controllers
             _context.Brands.Add(brand);
             _context.SaveChanges();
 
+            //Response.Cookies.Append("Notification", "Add Brand Successfully");
+            TempData["Notification"] = "Add Brand Successfully";
+
             //return View(nameof(Index));
             return RedirectToAction(nameof(Index));
         }
@@ -105,6 +108,8 @@ namespace ECommerce.Areas.Admin.Controllers
             _context.Brands.Update(brand);
             _context.SaveChanges();
 
+            TempData["Notification"] = "Update Brand Successfully";
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -124,7 +129,9 @@ namespace ECommerce.Areas.Admin.Controllers
 
             _context.Brands.Remove(brand);
             _context.SaveChanges();
-                
+
+            TempData["Notification"] = "Delete Brand Successfully";
+
             return RedirectToAction(nameof(Index));
         }
     }

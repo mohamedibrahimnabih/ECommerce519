@@ -1,4 +1,8 @@
 ﻿<div class="container">
+
+   
+    
+
     <div class="row mb-3 align-items-center my-3">
         <div class="col-md-6">
             <h2 class="display-6">All Brands</h2>
@@ -80,5 +84,17 @@
         });
     });
 </script>
+
+@section Scripts {
+
+    @if (@TempData["Notification"] is not null)
+    {
+        <script>
+            toastr.success('@TempData["Notification"]')
+        </script>
+    }
+
+    
+}
 
 
