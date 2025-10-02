@@ -67,8 +67,41 @@ namespace ECommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Brand brand)
+        public IActionResult Edit(Brand brand, IFormFile? img)
         {
+            var brandInDb = _context.Brands.AsNoTracking().FirstOrDefault(e => e.Id == brand.Id);
+            if(brandInDb is null)
+                return RedirectToAction("NotFoundPage", "Home");
+
+            if (img is not null)
+            {
+                if(img.Length > 0)
+                {
+                    // Save Img in wwwroot
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName); // 30291jsfd4-210klsdf32-4vsfksgs.png
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", fileName);
+
+                    using (var stream = System.IO.File.Create(filePath))
+                    {
+                        img.CopyTo(stream);
+                    }
+
+                    // Remove old Img in wwwroot
+                    var oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", brandInDb.Img);
+                    if(System.IO.File.Exists(oldPath))
+                    {
+                        System.IO.File.Delete(oldPath);
+                    }
+
+                    // Save Img in db
+                    brand.Img = fileName;
+                }
+            }
+            else
+            {
+                brand.Img = brandInDb.Img;
+            }
+
             _context.Brands.Update(brand);
             _context.SaveChanges();
 
@@ -81,6 +114,13 @@ namespace ECommerce.Areas.Admin.Controllers
 
             if (brand is null)
                 return RedirectToAction("NotFoundPage", "Home");
+
+            // Remove old Img in wwwroot
+            var oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", brand.Img);
+            if (System.IO.File.Exists(oldPath))
+            {
+                System.IO.File.Delete(oldPath);
+            }
 
             _context.Brands.Remove(brand);
             _context.SaveChanges();
