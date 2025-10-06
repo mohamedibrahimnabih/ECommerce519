@@ -6,7 +6,7 @@ namespace ECommerce.Models
     public class ProductColor
     {
         public int ProductId { get; set; }
-        public Product Product { get; set; } = null!;
+        public Product Product { get; } = null!;
         public string Color { get; set; } = string.Empty;
     }
 }

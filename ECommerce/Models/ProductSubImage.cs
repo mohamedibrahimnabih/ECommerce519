@@ -6,7 +6,7 @@ namespace ECommerce.Models
     public class ProductSubImage
     {
         public int ProductId { get; set; }
-        public Product Product { get; set; } = null!;
+        public Product Product { get; } = null!;
         public string Img { get; set; } = string.Empty;
     }
 }

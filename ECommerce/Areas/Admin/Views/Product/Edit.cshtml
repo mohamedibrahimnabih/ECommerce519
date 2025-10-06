@@ -28,6 +28,27 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="SubImgs" class="form-label">Sub Imgs</label>
+                    <input type="file" class="form-control" id="SubImgs" name="SubImgs" accept="image/*" multiple>
+                </div>
+
+                @if(Model.Product.productSubImages.Any())
+                {
+                    foreach(var item in Model.Product.productSubImages)
+                    {
+                        <div class="mb-3" style="position:relative; display: inline-block">
+                            <img id="preview"
+                                 src="~/images/product_images/@item.Img"
+                                 alt="Current Image"
+                                 style="width: 150px; border:1px solid #ccc; padding:5px; border-radius:10px;" />
+
+                                <a href="/Admin/Product/DeleteSubImg?productId=@Model.Product.Id&Img=@item.Img" id="addButtonColor" class="btn btn-sm btn-danger"
+                                style="position: absolute; top: 5px; right: 5px">X</a>
+                        </div>
+                    }
+                }
+
+                <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
                     <div class="form-floating">
                         <textarea class="form-control" placeholder="Leave a description here" style="height: 100px" name="Description">@Model.Product.Description</textarea>
@@ -45,6 +66,21 @@
                 <div class="mb-3">
                     <label for="Quantity" class="form-label">Quantity</label>
                     <input class="form-control" name="Quantity" value="@Model.Product.Quantity">
+                </div>
+                <div class="mb-3">
+                    <label for="Color" class="form-label">Color</label>
+
+                    <div id="colorContainer">
+                        @foreach(var item in Model.Product.ProductColors)
+                        {
+                            <div class="mb-2 d-flex align-item-center">
+                                <input type="color" class="form-control form-control-color" name="Colors" value="@item.Color">
+                                <button type="Button" class="btn btn-danger btn-sm removeColor">X</button>
+                            </div>
+                        }
+                    </div>
+
+                    <button type="button" id="addButtonColor" class="btn btn-outline-primary">+ Add New Color</button>
                 </div>
                 <div class="mb-3">
                     <label for="CategoryId" class="form-label">Category</label>
@@ -115,4 +151,28 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+
+</script>
+
+<script>
+    const conateiner = document.getElementById('colorContainer');
+    const addBtn = document.getElementById('addButtonColor');
+
+    addBtn.addEventListener('click', () => {
+        var colorRow = document.createElement('div');
+
+        colorRow.className = 'mb-2 d-flex align-item-center'
+        colorRow.innerHTML = `
+            <input type="color" class="form-control form-control-color" name="Colors">
+            <button type="Button" class="btn btn-danger btn-sm removeColor">X</button>
+        `;
+
+        conateiner.appendChild(colorRow);
+    });
+
+    conateiner.addEventListener('click', (e) => {
+        if(e.target.classList.contains('removeColor')) {
+            e.target.parentElement.remove();
+        }
+    })
 </script>
