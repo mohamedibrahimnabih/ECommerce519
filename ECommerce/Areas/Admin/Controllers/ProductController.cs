@@ -49,10 +49,10 @@ namespace ECommerce.Areas.Admin.Controllers
                 ViewBag.brandId = filterProductVM.brandId;
             }
 
-            if (filterProductVM.isHot)
+            if (filterProductVM.lessQuantity)
             {
-                products = products.Where(e => e.Discount > discount);
-                ViewBag.isHot = filterProductVM.isHot;
+                products = products.OrderBy(e=>e.Quantity);
+                ViewBag.lessQuantity = filterProductVM.lessQuantity;
             }
 
             // Categories
@@ -91,52 +91,82 @@ namespace ECommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Product product, IFormFile img, List<IFormFile>? subImgs)
+        public IActionResult Create(Product product, IFormFile img, List<IFormFile>? subImgs, string[] colors)
         {
-            if(img is not null && img.Length > 0)
+            var transaction = _context.Database.BeginTransaction();
+
+            try
             {
-                // Save Img in wwwroot
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName); // 30291jsfd4-210klsdf32-4vsfksgs.png
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", fileName);
-
-                using(var stream = System.IO.File.Create(filePath))
-                {
-                    img.CopyTo(stream);
-                }
-
-                // Save Img in db
-                product.MainImg = fileName;
-            }
-
-            // Save product in db
-            var productCreated = _context.Products.Add(product);
-            _context.SaveChanges();
-
-            if(subImgs is not null && subImgs.Count > 0)
-            {
-                foreach (var item in subImgs)
+                if (img is not null && img.Length > 0)
                 {
                     // Save Img in wwwroot
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName); // 30291jsfd4-210klsdf32-4vsfksgs.png
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\product_images", fileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", fileName);
 
                     using (var stream = System.IO.File.Create(filePath))
                     {
                         img.CopyTo(stream);
                     }
 
-                    _context.ProductSubImages.Add(new()
-                    {
-                        Img = fileName,
-                        ProductId = productCreated.Entity.Id,
-                    });
+                    // Save Img in db
+                    product.MainImg = fileName;
                 }
 
+                // Save product in db
+                var productCreated = _context.Products.Add(product);
                 _context.SaveChanges();
-            }
 
-            //Response.Cookies.Append("Notification", "Add Product Successfully");
-            TempData["Notification"] = "Add Product Successfully";
+                if (subImgs is not null && subImgs.Count > 0)
+                {
+                    foreach (var item in subImgs)
+                    {
+                        // Save Img in wwwroot
+                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName); // 30291jsfd4-210klsdf32-4vsfksgs.png
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\product_images", fileName);
+
+                        using (var stream = System.IO.File.Create(filePath))
+                        {
+                            img.CopyTo(stream);
+                        }
+
+                        _context.ProductSubImages.Add(new()
+                        {
+                            Img = fileName,
+                            ProductId = productCreated.Entity.Id,
+                        });
+                    }
+
+                    _context.SaveChanges();
+                }
+
+                if (colors.Any())
+                {
+                    foreach (var item in colors)
+                    {
+                        _context.ProductColors.Add(new()
+                        {
+                            Color = item,
+                            ProductId = productCreated.Entity.Id,
+                        });
+                    }
+
+                    _context.SaveChanges();
+                }
+
+                //Response.Cookies.Append("success-notification", "Add Product Successfully");
+                TempData["success-notification"] = "Add Product Successfully";
+
+                transaction.Commit();
+            }
+            catch(Exception ex)
+            {
+                // Logging
+                TempData["error-notification"] = "Error While Saving the product";
+
+                transaction.Rollback();
+
+                // Validation
+            }
 
             //return View(nameof(Index));
             return RedirectToAction(nameof(Index));
@@ -202,7 +232,7 @@ namespace ECommerce.Areas.Admin.Controllers
             _context.Products.Update(product);
             _context.SaveChanges();
 
-            TempData["Notification"] = "Update Product Successfully";
+            TempData["success-notification"] = "Update Product Successfully";
 
             return RedirectToAction(nameof(Index));
         }
@@ -224,7 +254,7 @@ namespace ECommerce.Areas.Admin.Controllers
             _context.Products.Remove(product);
             _context.SaveChanges();
 
-            TempData["Notification"] = "Delete Product Successfully";
+            TempData["success-notification"] = "Delete Product Successfully";
 
             return RedirectToAction(nameof(Index));
         }

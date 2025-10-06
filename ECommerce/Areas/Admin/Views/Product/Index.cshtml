@@ -79,11 +79,11 @@
                         @*     </select> *@
                         @* </div> *@
 
-                        <!-- Hot Product Checkbox -->
+                        <!-- Less Quantity Product Checkbox -->
                         <div class="col-md-1">
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" name="IsHot" value="true" @(ViewBag.isHot is not null && ViewBag.isHot ? "checked" : "")>
-                                <label class="form-check-label">Hot</label>
+                                <input type="checkbox" class="form-check-input" name="lessQuantity" value="true" @(ViewBag.lessQuantity is not null && ViewBag.lessQuantity ? "checked" : "")>
+                                <label class="form-check-label">Less Quantity</label>
                             </div>
                         </div>
 
@@ -169,15 +169,15 @@
             <ul class="pagination">
                 @if (@ViewBag.CurrentPage > 1)
                 {
-                    <li class="page-item"><a class="page-link" href="?page=@(ViewBag.CurrentPage - 1)">Previous</a></li>
+                    <li class="page-item"><a class="page-link" href="?page=@(ViewBag.CurrentPage - 1)&name=@ViewBag.Name&minPrice=@ViewBag.minPrice&maxPrice=@ViewBag.maxPrice&categoryId=@ViewBag.categoryId&brandId=@ViewBag.brandId&lessQuantity=@ViewBag.lessQuantity">Previous</a></li>
                 }
                 @for (var i = 1; i <= ViewBag.TotalPages; i++)
                 {
-                    <li class="page-item"><a class="page-link" href="?page=@i">@i</a></li>
+                    <li class="page-item"><a class="page-link" href="?page=@i&name=@ViewBag.Name&minPrice=@ViewBag.minPrice&maxPrice=@ViewBag.maxPrice&categoryId=@ViewBag.categoryId&brandId=@ViewBag.brandId&lessQuantity=@ViewBag.lessQuantity">@i</a></li>
                 }
                 @if (@ViewBag.CurrentPage < ViewBag.TotalPages)
                 {
-                    <li class="page-item"><a class="page-link" href="?page=@(ViewBag.CurrentPage + 1)">Next</a></li>
+                    <li class="page-item"><a class="page-link" href="?page=@(ViewBag.CurrentPage + 1)&name=@ViewBag.Name&minPrice=@ViewBag.minPrice&maxPrice=@ViewBag.maxPrice&categoryId=@ViewBag.categoryId&brandId=@ViewBag.brandId&lessQuantity=@ViewBag.lessQuantity">Next</a></li>
                 }
             </ul>
         </nav>
@@ -221,14 +221,8 @@
 
 @section Scripts {
 
-    @if (@TempData["Notification"] is not null)
-    {
-        <script>
-            toastr.success('@TempData["Notification"]')
-        </script>
-    }
+    <partial name="_NotificationPartial">
 
-    
 }
 
 
