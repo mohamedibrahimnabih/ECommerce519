@@ -1,4 +1,7 @@
-﻿namespace ECommerce.Models
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
+
+namespace ECommerce.Models
 {
     public class Brand
     {

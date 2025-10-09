@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ECommerce.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using Mapster;
 
 namespace ECommerce.Areas.Admin.Controllers
 {
@@ -26,21 +29,35 @@ namespace ECommerce.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            return View(new CreateBrandVM());
         }
 
         [HttpPost]
-        public IActionResult Create(Brand brand, IFormFile img)
+        public IActionResult Create(CreateBrandVM createBrandVM)
         {
-            if(img is not null && img.Length > 0)
+            if (!ModelState.IsValid)
+            {
+                return View(createBrandVM);
+            }
+
+            //Brand brand = new()
+            //{
+            //    Name = createBrandVM.Name,
+            //    Status = createBrandVM.Status,
+            //    Description = createBrandVM.Description,
+            //};
+
+            Brand brand = createBrandVM.Adapt<Brand>();
+
+            if (createBrandVM.Img is not null && createBrandVM.Img.Length > 0)
             {
                 // Save Img in wwwroot
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName); // 30291jsfd4-210klsdf32-4vsfksgs.png
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(createBrandVM.Img.FileName); // 30291jsfd4-210klsdf32-4vsfksgs.png
                 var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", fileName);
 
                 using(var stream = System.IO.File.Create(filePath))
                 {
-                    img.CopyTo(stream);
+                    createBrandVM.Img.CopyTo(stream);
                 }
 
                 // Save Img in db
@@ -66,27 +83,51 @@ namespace ECommerce.Areas.Admin.Controllers
             if (brand is null)
                 return RedirectToAction("NotFoundPage", "Home");
 
-            return View(brand);
+            //return View(new UpdateBrandVM()
+            //{
+            //    Id = brand.Id,
+            //    Name = brand.Name,
+            //    Description = brand.Description,
+            //    Status = brand.Status,
+            //    Img = brand.Img,
+            //});
+
+            return View(brand.Adapt<UpdateBrandVM>());
         }
 
         [HttpPost]
-        public IActionResult Edit(Brand brand, IFormFile? img)
+        public IActionResult Edit(UpdateBrandVM updateBrandVM)
         {
-            var brandInDb = _context.Brands.AsNoTracking().FirstOrDefault(e => e.Id == brand.Id);
+            if (!ModelState.IsValid)
+            {
+                return View(updateBrandVM);
+            }
+
+            var brandInDb = _context.Brands.AsNoTracking().FirstOrDefault(e => e.Id == updateBrandVM.Id);
             if(brandInDb is null)
                 return RedirectToAction("NotFoundPage", "Home");
 
-            if (img is not null)
+            //Brand brand = new()
+            //{
+            //    Id = updateBrandVM.Id,
+            //    Name = updateBrandVM.Name,
+            //    Status = updateBrandVM.Status,
+            //    Description = updateBrandVM.Description,
+            //};
+
+            Brand brand = updateBrandVM.Adapt<Brand>();
+
+            if (updateBrandVM.NewImg is not null)
             {
-                if(img.Length > 0)
+                if(updateBrandVM.NewImg.Length > 0)
                 {
                     // Save Img in wwwroot
-                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName); // 30291jsfd4-210klsdf32-4vsfksgs.png
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(updateBrandVM.NewImg.FileName); // 30291jsfd4-210klsdf32-4vsfksgs.png
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", fileName);
 
                     using (var stream = System.IO.File.Create(filePath))
                     {
-                        img.CopyTo(stream);
+                        updateBrandVM.NewImg.CopyTo(stream);
                     }
 
                     // Remove old Img in wwwroot

@@ -45,7 +45,7 @@ namespace ECommerce.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands");
+                    b.ToTable("Brands", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Models.Category", b =>
@@ -68,7 +68,7 @@ namespace ECommerce.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Models.Product", b =>
@@ -117,7 +117,7 @@ namespace ECommerce.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Models.ProductColor", b =>
@@ -130,7 +130,7 @@ namespace ECommerce.Migrations
 
                     b.HasKey("ProductId", "Color");
 
-                    b.ToTable("ProductColors");
+                    b.ToTable("ProductColors", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Models.ProductSubImage", b =>
@@ -143,7 +143,7 @@ namespace ECommerce.Migrations
 
                     b.HasKey("ProductId", "Img");
 
-                    b.ToTable("ProductSubImages");
+                    b.ToTable("ProductSubImages", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Models.Product", b =>
