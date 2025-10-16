@@ -1,16 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ECommerce.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class CategoryController : Controller
     {
-        ApplicationDbContext _context = new();
+        //ApplicationDbContext _context = new();
+        Repository<Category> _categoryRepository = new();
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var categories = _context.Categories.AsNoTracking().AsQueryable();
+            var categories = await _categoryRepository.GetAsync(tracked: false, cancellationToken: cancellationToken);
 
             // Add Filter
 
@@ -24,24 +27,24 @@ namespace ECommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Category category)
+        public async Task<IActionResult> Create(Category category, CancellationToken cancellationToken)
         {
             if(!ModelState.IsValid)
             {
                 return View(category);
             }
 
-            _context.Categories.Add(category);
-            _context.SaveChanges();
+            await _categoryRepository.AddAsync(category, cancellationToken);
+            await _categoryRepository.CommitAsync(cancellationToken);
 
             //return View(nameof(Index));
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
-            var category = _context.Categories.FirstOrDefault(e => e.Id == id);
+            var category = await _categoryRepository.GetOneAsync(e => e.Id == id, cancellationToken: cancellationToken);
 
             if (category is null)
                 return RedirectToAction("NotFoundPage", "Home");
@@ -50,7 +53,7 @@ namespace ECommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Category category)
+        public async Task<IActionResult> Edit(Category category, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -59,21 +62,21 @@ namespace ECommerce.Areas.Admin.Controllers
                 return View(category);
             }
 
-            _context.Categories.Update(category);
-            _context.SaveChanges();
+            _categoryRepository.Update(category);
+            await _categoryRepository.CommitAsync(cancellationToken);
 
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            var category = _context.Categories.FirstOrDefault(e => e.Id == id);
+            var category = await _categoryRepository.GetOneAsync(e => e.Id == id, cancellationToken: cancellationToken);
 
             if (category is null)
                 return RedirectToAction("NotFoundPage", "Home");
 
-            _context.Categories.Remove(category);
-            _context.SaveChanges();
+            _categoryRepository.Delete(category);
+            await _categoryRepository.CommitAsync(cancellationToken);
 
             return RedirectToAction(nameof(Index));
         }
