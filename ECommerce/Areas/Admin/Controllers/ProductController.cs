@@ -11,12 +11,22 @@ namespace ECommerce.Areas.Admin.Controllers
     [Area("Admin")]
     public class ProductController : Controller
     {
-        ApplicationDbContext _context = new();
-        ProductRepository _productRepository = new();
-        Repository<Category> _categoryRepository = new();
-        Repository<Brand> _brandRepository = new();
-        Repository<ProductSubImage> _productSubImageRepository = new();
-        ProductColorRepository _productColorRepository = new();
+        private readonly ApplicationDbContext _context;// = new();
+        private readonly IProductRepository _productRepository;
+        private readonly IRepository<Category> _categoryRepository;// = new();
+        private readonly IRepository<Brand> _brandRepository;// = new();
+        private readonly IRepository<ProductSubImage> _productSubImageRepository;// = new();
+        private readonly IProductColorRepository _productColorRepository;// = new();
+
+        public ProductController(ApplicationDbContext context, IProductRepository productRepository, IRepository<Category> categoryRepository, IRepository<Brand> brandRepository, IRepository<ProductSubImage> productSubImageRepository, IProductColorRepository productColorRepository)
+        {
+            _context = context;
+            _productRepository = productRepository;
+            _categoryRepository = categoryRepository;
+            _brandRepository = brandRepository;
+            _productSubImageRepository = productSubImageRepository;
+            _productColorRepository = productColorRepository;
+        }
 
         public async Task<IActionResult> Index(FilterProductVM filterProductVM, CancellationToken cancellationToken, int page = 1)
         {
@@ -235,7 +245,7 @@ namespace ECommerce.Areas.Admin.Controllers
                 product.MainImg = productInDb.MainImg;
             }
 
-            await _productRepository.AddAsync(product, cancellationToken: cancellationToken);
+            _productRepository.Update(product);
             await _productRepository.CommitAsync(cancellationToken);
 
             if (subImgs is not null && subImgs.Count > 0)

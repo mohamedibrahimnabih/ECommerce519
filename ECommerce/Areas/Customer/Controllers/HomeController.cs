@@ -10,10 +10,11 @@ namespace ECommerce.Areas.Customer.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private ApplicationDbContext _context = new();
+        private ApplicationDbContext _context;// = new();
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
+            _context = context;
             _logger = logger;
         }
 
@@ -89,19 +90,19 @@ namespace ECommerce.Areas.Customer.Controllers
         public ViewResult PersonalInfo(int id)
         {
             List<Person> persons = new List<Person>();
-            persons.AddRange(new()
-            {
-                Id = 1,
-                Name = "Mohamed",
-                Salary = 1000,
-                Address = "Caio"
-            }, new()
-            {
-                Id = 2,
-                Name = "Ali",
-                Salary = 2000,
-                Address = "Alex"
-            });
+            //persons.AddRange(new()
+            //{
+            //    Id = 1,
+            //    Name = "Mohamed",
+            //    Salary = 1000,
+            //    Address = "Caio"
+            //}, new()
+            //{
+            //    Id = 2,
+            //    Name = "Ali",
+            //    Salary = 2000,
+            //    Address = "Alex"
+            //});
 
             // Logic
 

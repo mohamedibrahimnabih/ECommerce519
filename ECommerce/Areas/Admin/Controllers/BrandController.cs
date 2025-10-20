@@ -12,7 +12,12 @@ namespace ECommerce.Areas.Admin.Controllers
     public class BrandController : Controller
     {
         //ApplicationDbContext _context = new();
-        Repository<Brand> _brandRepository = new();
+        private readonly IRepository<Brand> _brandRepository;// = new();
+
+        public BrandController(IRepository<Brand> brandRepository)
+        {
+            _brandRepository = brandRepository;
+        }
 
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {

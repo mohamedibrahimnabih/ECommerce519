@@ -1,23 +1,23 @@
 ﻿using ECommerce.DataAccess.EntityConfigurations;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata;
+using ECommerce.ViewModels;
 
 namespace ECommerce.DataAccess
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
+        {
+        }
+
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductColor> ProductColors { get; set; }
         public DbSet<ProductSubImage> ProductSubImages { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-
-            optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=ECommerce519;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,5 +34,21 @@ namespace ECommerce.DataAccess
 
             base.OnModelCreating(modelBuilder);
         }
+        public DbSet<ECommerce.ViewModels.RegisterVM> RegisterVM { get; set; } = default!;
+
+        // Deprecated 
+
+        //public ApplicationDbContext()
+        //{
+        //}
+
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    base.OnConfiguring(optionsBuilder);
+
+        //    optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=ECommerce519;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
+        //}
+
+       
     }
 }
