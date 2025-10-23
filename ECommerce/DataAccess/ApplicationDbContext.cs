@@ -18,6 +18,7 @@ namespace ECommerce.DataAccess
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductColor> ProductColors { get; set; }
         public DbSet<ProductSubImage> ProductSubImages { get; set; }
+        public DbSet<ApplicationUserOTP> ApplicationUserOTPs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,7 +35,7 @@ namespace ECommerce.DataAccess
 
             base.OnModelCreating(modelBuilder);
         }
-        public DbSet<ECommerce.ViewModels.RegisterVM> RegisterVM { get; set; } = default!;
+        public DbSet<ECommerce.ViewModels.NewPasswordVM> NewPasswordVM { get; set; } = default!;
 
         // Deprecated 
 

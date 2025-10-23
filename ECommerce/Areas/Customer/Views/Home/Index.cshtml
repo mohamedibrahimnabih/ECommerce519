@@ -115,7 +115,7 @@
     <section class="py-5">
         <div class="container px-4 px-lg-5 mt-5">
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                @foreach(var item in Model)
+                @foreach (var item in Model)
                 {
                     <div class="col mb-5">
                         <div class="card h-100">
@@ -135,7 +135,7 @@
                                     <h5 class="fw-bolder">@item.Name</h5>
                                     <!-- Product reviews-->
                                     <div class="d-flex justify-content-center small text-warning mb-2">
-                                        @for(var i = 0; i < item.Rate; i++)
+                                        @for (var i = 0; i < item.Rate; i++)
                                         {
                                             <div class="bi-star-fill"></div>
                                         }
@@ -157,11 +157,11 @@
             <div class="row">
                 <nav aria-label="Page navigation example" style="justify-content: center;display: flex;">
                     <ul class="pagination">
-                        @if(@ViewBag.CurrentPage > 1)
+                        @if (@ViewBag.CurrentPage > 1)
                         {
                             <li class="page-item"><a class="page-link" href="?page=@(ViewBag.CurrentPage - 1)&name=@ViewBag.Name&minPrice=@ViewBag.minPrice&maxPrice=@ViewBag.maxPrice&categoryId=@ViewBag.categoryId&brandId=@ViewBag.brandId&IsHot=@ViewBag.IsHot">Previous</a></li>
                         }
-                        @for (var i = 1; i <= ViewBag.TotalPages;i++)
+                        @for (var i = 1; i <= ViewBag.TotalPages; i++)
                         {
                             <li class="page-item"><a class="page-link" href="?page=@i&name=@ViewBag.Name&minPrice=@ViewBag.minPrice&maxPrice=@ViewBag.maxPrice&categoryId=@ViewBag.categoryId&brandId=@ViewBag.brandId&IsHot=@ViewBag.IsHot">@i</a></li>
                         }
@@ -175,3 +175,7 @@
         </div>
     </section>
 </div>
+
+@section Scripts {
+    <partial name="_NotificationPartial" />
+}

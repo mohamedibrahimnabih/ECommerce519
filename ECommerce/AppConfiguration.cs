@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using ECommerce.Utitlies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce
@@ -19,8 +21,12 @@ namespace ECommerce
                 option.User.RequireUniqueEmail = true;
                 option.Password.RequiredLength = 8;
                 option.Password.RequireNonAlphanumeric = false;
+                option.SignIn.RequireConfirmedEmail = true;
             })
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddScoped<IRepository<Category>, Repository<Category>>();
             services.AddScoped<IRepository<Brand>, Repository<Brand>>();
@@ -28,6 +34,7 @@ namespace ECommerce
             services.AddScoped<IRepository<ProductSubImage>, Repository<ProductSubImage>>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IProductColorRepository, ProductColorRepository>();
+            services.AddScoped<IRepository<ApplicationUserOTP>, Repository<ApplicationUserOTP>>();
         }
     }
 }
