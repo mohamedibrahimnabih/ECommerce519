@@ -153,10 +153,17 @@
                             {
                                 <td><span class="badge text-bg-danger">InActive</span></td>
                             }
-                            <td>
-                                <a href="/Admin/Product/Edit/@item.Id" type="button" class="btn btn-warning">Edit</a>
-                                <a href="/Admin/Product/Delete/@item.Id" class="btn btn-danger btn-delete">Delete</a>
-                            </td>
+                            @if (User.IsInRole(SD.SUPER_ADMIN_ROLE) || User.IsInRole(SD.ADMIN_ROLE))
+                            {
+                                <td>
+                                    <a href="/Admin/Product/Edit/@item.Id" type="button" class="btn btn-warning">Edit</a>
+                                    <a href="/Admin/Product/Delete/@item.Id" class="btn btn-danger btn-delete">Delete</a>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>No Actions!</td>
+                            }
                         </tr>
                     }
                 </tbody>

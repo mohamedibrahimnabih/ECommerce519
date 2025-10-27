@@ -1,4 +1,5 @@
 ﻿using ECommerce.Utitlies;
+using ECommerce.Utitlies.DBInitilizer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,12 @@ namespace ECommerce
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login"; // Default login path
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied"; // Default access denied path
+            });
+
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddScoped<IRepository<Category>, Repository<Category>>();
@@ -35,6 +42,8 @@ namespace ECommerce
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IProductColorRepository, ProductColorRepository>();
             services.AddScoped<IRepository<ApplicationUserOTP>, Repository<ApplicationUserOTP>>();
+
+            services.AddScoped<IDBInitializer, DBInitializer>();
         }
     }
 }

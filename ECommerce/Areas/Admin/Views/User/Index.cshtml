@@ -1,12 +1,12 @@
-﻿@model IEnumerable<Category>
+﻿@model IEnumerable<ApplicationUser>
 
 <div class="container">
     <div class="row mb-3 align-items-center my-3">
         <div class="col-md-6">
-            <h2 class="display-6">All Categories</h2>
+            <h2 class="display-6">All Users</h2>
         </div>
         <div class="col-md-6 text-md-end text-start mt-2 mt-md-0">
-            <a href="/Admin/Category/Create" class="btn btn-success">Create</a>
+            <a href="/Admin/User/Create" class="btn btn-success">Create</a>
         </div>
     </div>
 
@@ -18,17 +18,19 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
+                        <th scope="col">Email</th>
                         <th scope="col">Status</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach(var item in Model)
+                    @foreach (var item in Model)
                     {
                         <tr>
                             <th scope="row">@item.Id</th>
-                            <td>@item.Name</td>
-                            @if (item.Status)
+                            <td>@item.FirstName @item.LastName</td>
+                            <td>@item.Email</td>
+                            @if (item.LockoutEnabled)
                             {
                                 <td><span class="badge text-bg-success">Active</span></td>
                             }
@@ -36,12 +38,16 @@
                             {
                                 <td><span class="badge text-bg-danger">InActive</span></td>
                             }
-                            @if(User.IsInRole(SD.SUPER_ADMIN_ROLE) || User.IsInRole(SD.ADMIN_ROLE))
+                            @if (User.IsInRole(SD.SUPER_ADMIN_ROLE) || User.IsInRole(SD.ADMIN_ROLE))
                             {
-                                <td>
-                                    <a href="/Admin/Category/Edit/@item.Id" type="button" class="btn btn-warning">Edit</a>
-                                    <a href="/Admin/Category/Delete/@item.Id" class="btn btn-danger btn-delete">Delete</a>
-                                </td>
+                                @if (item.LockoutEnabled)
+                                {
+                                    <td><a href="/Admin/User/LockUnLock/@item.Id" class="btn btn-danger">Lock</a></td>
+                                }
+                                else
+                                {
+                                    <td><a href="/Admin/User/LockUnLock/@item.Id" class="btn btn-success">Un Lock</a></td>
+                                }
                             }
                             else
                             {
@@ -57,7 +63,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const deleteButtons = document.querySelectorAll(".btn-delete");
+        const deleteButtons = document.querySelectorAll(".btn-danger");
 
         deleteButtons.forEach(button => {
             button.addEventListener("click", function (e) {
@@ -72,12 +78,12 @@
                     showCancelButton: true,
                     confirmButtonColor: "#d33",
                     cancelButtonColor: "#3085d6",
-                    confirmButtonText: "Yes, delete it!"
+                    confirmButtonText: "Yes, Block it!"
                 }).then((result) => {
                     if (result.isConfirmed) {
                         Swal.fire({
-                          title: "Deleted!",
-                          text: "Your file has been deleted.",
+                          title: "Blocked!",
+                          text: "Your user has been blocked.",
                           icon: "success"
                         });
 

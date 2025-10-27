@@ -1,3 +1,5 @@
+using ECommerce.Configurations;
+using ECommerce.Utitlies.DBInitilizer;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce
@@ -17,8 +19,13 @@ namespace ECommerce
                         + "'DefaultConnection' not found.");
 
             builder.Services.RegisterConfig(connectionString);
+            builder.Services.RegisterMapsterConfig();
 
             var app = builder.Build();
+
+            var scope = app.Services.CreateScope();
+            var service = scope.ServiceProvider.GetService<IDBInitializer>();
+            service!.Initialize();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

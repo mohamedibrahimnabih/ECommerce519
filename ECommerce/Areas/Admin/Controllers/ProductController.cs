@@ -1,5 +1,6 @@
 ﻿using ECommerce.Models;
 using ECommerce.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 namespace ECommerce.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE},{SD.EMPLOYEE_ROLE}")]
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _context;// = new();
@@ -189,6 +191,7 @@ namespace ECommerce.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE}")]
         public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
             var product = await _productRepository.GetOneAsync(e => e.Id == id, includes: [e => e.productSubImages, e => e.ProductColors], tracked: false, cancellationToken: cancellationToken);
@@ -210,6 +213,7 @@ namespace ECommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE}")]
         public async Task<IActionResult> Edit(Product product, IFormFile? img, List<IFormFile>? subImgs, string[] colors, CancellationToken cancellationToken)
         {
             var productInDb = await _productRepository.GetOneAsync(e => e.Id == product.Id, includes: [e => e.ProductColors], tracked: false, cancellationToken: cancellationToken);
@@ -297,6 +301,7 @@ namespace ECommerce.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE}")]
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             var product = await _productRepository.GetOneAsync(e => e.Id == id, includes: [e => e.productSubImages, e => e.ProductColors], tracked: false, cancellationToken: cancellationToken);
@@ -329,6 +334,7 @@ namespace ECommerce.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE}")]
         public async Task<IActionResult> DeleteSubImg(int productId, string Img, CancellationToken cancellationToken)
         {
             var productSubImgInDb = await _productSubImageRepository.GetOneAsync(e => e.ProductId == productId && e.Img == Img);
