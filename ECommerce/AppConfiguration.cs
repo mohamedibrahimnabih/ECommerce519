@@ -42,6 +42,8 @@ namespace ECommerce
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IProductColorRepository, ProductColorRepository>();
             services.AddScoped<IRepository<ApplicationUserOTP>, Repository<ApplicationUserOTP>>();
+            services.AddScoped<IRepository<Cart>, Repository<Cart>>();
+            services.AddScoped<IRepository<Promotion>, Repository<Promotion>>();
 
             services.AddScoped<IDBInitializer, DBInitializer>();
         }

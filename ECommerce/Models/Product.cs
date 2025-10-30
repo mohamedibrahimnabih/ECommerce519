@@ -11,6 +11,7 @@
         public int Quantity { get; set; }
         public double Rate { get; set; }
         public string MainImg { get; set; } = string.Empty;
+        public long Traffic { get; set; }
 
         public int CategoryId { get; set; }
         public Category Category { get; set; } = null!;

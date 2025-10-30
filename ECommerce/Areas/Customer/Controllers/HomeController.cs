@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Threading.Tasks;
 using ECommerce.Models;
 using ECommerce.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -75,6 +76,26 @@ namespace ECommerce.Areas.Customer.Controllers
             products = products.Skip((page - 1) * 8).Take(8); // 0 .. 8
 
             return View(products.AsEnumerable());
+        }
+
+
+        public async Task<IActionResult> Item(int id, CancellationToken cancellationToken)
+        {
+            var product = await _context.Products.Include(e=>e.Category).FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+
+            if (product is null)
+                return NotFound();
+
+            product.Traffic += 1;
+            _context.SaveChanges();
+
+            var relatedProducts = await _context.Products.Where(e => e.Name.Contains(product.Name) && e.Id != product.Id).OrderBy(e=>e.Traffic).Skip(0).Take(4).ToListAsync();
+
+            return View(new ProductWithRelatedVM
+            {
+                Product = product,
+                RelatedProducts = relatedProducts
+            });
         }
 
         public IActionResult Privacy()

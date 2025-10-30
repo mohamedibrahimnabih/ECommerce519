@@ -1,6 +1,7 @@
 using ECommerce.Configurations;
 using ECommerce.Utitlies.DBInitilizer;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 namespace ECommerce
 {
@@ -20,6 +21,9 @@ namespace ECommerce
 
             builder.Services.RegisterConfig(connectionString);
             builder.Services.RegisterMapsterConfig();
+
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             var app = builder.Build();
 
